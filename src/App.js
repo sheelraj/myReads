@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import './App.css';
 import * as BooksAPI from './BooksAPI';
-import {Route, Link} from 'react-router-dom';
+import {Route, Link, Switch} from 'react-router-dom';
 import Header from './Header';
 import Search from './Search';
 import BookShelf from './BookShelf';
+import NotFound from './NotFound';
 
 
 class App extends Component {
@@ -47,26 +48,29 @@ class App extends Component {
     const books = Object.values(booksOnShelf);
     return (
       <div>
-        <Route exact path='/' render={() => (
-          <div>
-            <Header />
-            <div className='list-books-content'>
-              <div>
-                {shelves.map(shelf => (
-                  <BookShelf key={shelf.id}
-                    books={books.filter((book) => book.shelf === shelf.id)}
-                    addBookToShelf={this.addBookToShelf}
-                    category={shelf.name}
-                  />
-                ))}
+       <Switch>
+          <Route exact path='/' render={() => (
+            <div>
+              <Header />
+              <div className='list-books-content'>
+                <div>
+                  {shelves.map(shelf => (
+                    <BookShelf key={shelf.id}
+                      books={books.filter((book) => book.shelf === shelf.id)}
+                      addBookToShelf={this.addBookToShelf}
+                      category={shelf.name}
+                    />
+                  ))}
+                </div>
               </div>
+              <Link to='/search' className='open-search'><button/></Link>
             </div>
-            <Link to='/search' className='open-search'><button/></Link>
-          </div>
-        )}/>
-        <Route path='/search' render={() => (
-          <Search addBookToShelf={this.addBookToShelf} booksOnShelf={booksOnShelf}/>
-        )}/>
+          )}/>
+          <Route exact path='/search' render={() => (
+            <Search addBookToShelf={this.addBookToShelf} booksOnShelf={booksOnShelf}/>
+          )}/>
+          <Route component={NotFound}/>
+        </Switch>
       </div>
     );
   }
